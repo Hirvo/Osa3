@@ -26,7 +26,15 @@ let persons = [
   }
 ]
 
-app.use(morgan('tiny'));
+morgan.token('postdata', function getPostData (req) {
+  if (req.method==='POST') {
+    return " " + JSON.stringify(req.body)
+  }
+  else
+    return " "
+})
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postdata'));
 
 app.get('/api/persons', (req, res) => {
   res.json(persons)
