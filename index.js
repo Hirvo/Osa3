@@ -44,7 +44,6 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 
 app.get('/api/people', (req, res) => {
   Person.find({}).then(people => {
-    console.log(Person)
     res.json(people)
   })
 })
@@ -56,8 +55,10 @@ app.get('/api/people/:id', (request, response) => {
 })
 
 app.get('/api/info', (req, res) => {
-  res.send('Phonebook has info for ' + (persons.length) + ' people <br> <br>'
-  + (new Date()))
+  Person.find({}).then(people => {
+    res.send('Phonebook has info for ' + (people.length) + ' people <br> <br>'
+    + (new Date()))
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -71,7 +72,7 @@ function generateId() {
   return Math.floor(Math.random() * (99999 - 1) + 1);
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/people', (request, response) => {
   const body = request.body
 
   if (!body.name) {
@@ -82,21 +83,16 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({ 
       error: 'number is missing' 
     })
-  } else if(persons.find(n => n.name === body.name)) {
-    return response.status(400).json({ 
-      error: 'name is already on the list' 
-    })
   }
 
-  const person = {
+  const person = new Person ({
     name: body.name,
     number: body.number,
-    id: generateId(),
-  }
+  })
 
-  persons = persons.concat(person)
-
-  response.json(persons)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 const PORT = process.env.PORT
