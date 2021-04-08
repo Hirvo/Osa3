@@ -11,13 +11,13 @@ app.use(cors())
 
 morgan.token('postdata', function getPostData (req) {
   if (req.method==='POST') {
-    return " " + JSON.stringify(req.body)
+    return ' ' + JSON.stringify(req.body)
   }
   else
-    return " "
+    return ' '
 })
 
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postdata'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postdata'))
 
 app.get('/api/people', (req, res) => {
   Person.find({}).then(people => {
@@ -32,7 +32,6 @@ app.get('/api/people/:id', (request, response, next) => {
     } else {
       response.status(404).end()
     }
-    
   }).catch(error => next(error))
 })
 
@@ -45,7 +44,7 @@ app.get('/api/info', (req, res) => {
 
 app.delete('/api/people/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -55,12 +54,12 @@ app.post('/api/people', (request, response, next) => {
   const body = request.body
 
   if (!body.name) {
-    return response.status(400).json({ 
-      error: 'name is missing' 
+    return response.status(400).json({
+      error: 'name is missing'
     })
   } else if(!body.number) {
-    return response.status(400).json({ 
-      error: 'number is missing' 
+    return response.status(400).json({
+      error: 'number is missing'
     })
   }
 
